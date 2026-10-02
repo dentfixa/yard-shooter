@@ -1143,7 +1143,6 @@ spawnWave();
 
 function frame(now) {
   requestAnimationFrame(frame);
-if (new URLSearchParams(location.search).has('debug')) window.__game = { player, enemies, combat, rifle, laser, blast, sword, keys, mouse, start: () => { started = true; $('start').style.display = 'none'; } };
   dtReal = Math.min(0.05, (now - last) / 1000); last = now;
   const inp = readInput();
   if (!started) { updateCamera(inp, dtReal); renderer.render(scene, camera); return; }
@@ -1183,3 +1182,4 @@ if (new URLSearchParams(location.search).has('debug')) window.__game = { player,
   renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
+if (new URLSearchParams(location.search).has('debug')) window.__game = { player, enemies, combat, rifle, laser, blast, sword, keys, mouse, start: () => { started = true; $('start').style.display = 'none'; } };
