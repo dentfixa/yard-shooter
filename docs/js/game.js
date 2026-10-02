@@ -1182,4 +1182,4 @@ function frame(now) {
   renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
-if (new URLSearchParams(location.search).has('debug')) window.__game = { frame, castAll, worldMeshes, player, enemies, combat, rifle, laser, blast, sword, keys, mouse, start: () => { started = true; $('start').style.display = 'none'; } };
+if (new URLSearchParams(location.search).has('debug')) window.__game = { frame, castAll, worldMeshes, camera, aimRay, player, enemies, combat, rifle, laser, blast, sword, keys, mouse, start: () => { started = true; $('start').style.display = 'none'; } };
