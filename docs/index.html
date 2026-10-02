@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yard Shooter</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:system-ui,"Malgun Gothic",sans-serif;color:#fff;user-select:none}
+  canvas{display:block}
+  #hud{position:fixed;inset:0;pointer-events:none}
+  #cross{position:absolute;left:50%;top:50%;width:0;height:0}
+  #cross i{position:absolute;background:#fff;box-shadow:0 0 2px #000}
+  #arc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:none}
+  #vig{position:absolute;inset:0;box-shadow:inset 0 0 160px 40px rgba(220,0,0,.8);opacity:0;transition:opacity .25s}
+  #hitdirs .hd{position:absolute;left:50%;top:50%;width:0;height:0}
+  #hitdirs .hd b{position:absolute;left:-22px;top:-130px;width:44px;height:16px;background:rgba(255,40,40,.9);clip-path:polygon(50% 0,100% 100%,0 100%)}
+  #bars{position:absolute;left:24px;bottom:24px;width:260px}
+  .bar{height:12px;background:rgba(0,0,0,.5);margin-top:6px;border:1px solid rgba(255,255,255,.3)}
+  .bar>div{height:100%}
+  .lbl{font-size:12px;opacity:.85;margin-top:8px}
+  #wpanel{position:absolute;right:24px;bottom:24px;text-align:right}
+  #slots{display:flex;gap:6px;justify-content:flex-end}
+  .slot{width:58px;height:40px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.45);font-size:12px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+  .slot.on{border-color:#fff;background:rgba(255,255,255,.2)}
+  #widget{margin-top:8px;font-size:26px;font-weight:700;text-shadow:0 0 4px #000;min-height:34px}
+  #wbar{width:240px;height:10px;margin:4px 0 0 auto;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.3)}
+  #wbar>div{height:100%}
+  #view{position:absolute;right:24px;top:20px;font-size:18px;font-weight:700;padding:4px 10px;border:1px solid #fff;background:rgba(0,0,0,.4)}
+  #info{position:absolute;left:24px;top:20px;font-size:13px;opacity:.8;text-shadow:0 0 3px #000}
+  #floaters div{position:absolute;font-weight:800;font-size:18px;text-shadow:0 0 3px #000;transform:translate(-50%,-50%)}
+  #start{position:fixed;inset:0;background:rgba(5,10,20,.82);display:flex;align-items:center;justify-content:center;pointer-events:auto;cursor:pointer}
+  #start .box{max-width:560px;padding:28px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.5);line-height:1.6}
+  #start h1{margin:0 0 10px;font-size:28px}
+  #start table{font-size:14px;border-collapse:collapse;width:100%}
+  #start td{padding:2px 8px}
+  #start td:first-child{color:#9cf;white-space:nowrap}
+  #toast{position:absolute;left:50%;top:30%;transform:translateX(-50%);font-size:28px;font-weight:800;text-shadow:0 0 6px #000}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+</head>
+<body>
+<div id="hud">
+  <div id="cross"><i></i><i></i><i></i><i></i></div>
+  <svg id="arc" width="260" height="260" viewBox="-130 -130 260 260"><path fill="rgba(255,255,255,.12)" stroke="#fff" stroke-width="2"/><text y="40" text-anchor="middle" fill="#fff" font-size="13"></text></svg>
+  <div id="vig"></div>
+  <div id="hitdirs"></div>
+  <div id="floaters"></div>
+  <div id="info">적 0</div>
+  <div id="view">1P</div>
+  <div id="bars">
+    <div class="lbl">체력</div><div class="bar"><div id="hp" style="background:#e44;width:100%"></div></div>
+    <div class="lbl">스태미나</div><div class="bar"><div id="st" style="background:#ec4;width:100%"></div></div>
+  </div>
+  <div id="wpanel">
+    <div id="slots"></div>
+    <div id="widget"></div>
+    <div id="wbar"><div></div></div>
+  </div>
+  <div id="toast"></div>
+</div>
+<div id="start"><div class="box">
+  <h1>Yard Shooter</h1>
+  <table>
+    <tr><td>WASD / Shift</td><td>이동 / 달리기</td></tr>
+    <tr><td>Space / C (또는 Ctrl)</td><td>점프 / 웅크리기</td></tr>
+    <tr><td>V</td><td>1인칭 ↔ 3인칭</td></tr>
+    <tr><td>1 2 3 4 / 휠</td><td>소총 · 레이저 · 광역 · 장검</td></tr>
+    <tr><td>좌클릭</td><td>공격 (레이저: 탭=펄스, 홀드=지속빔)</td></tr>
+    <tr><td>우클릭</td><td>조준 / 광역 낙하예측 / 장검 가드·패링</td></tr>
+    <tr><td>R / Alt(또는 Q)</td><td>재장전 / 구르기</td></tr>
+    <tr><td>P</td><td>전멸 시 자동 리스폰 토글</td></tr>
+  </table>
+  <p style="opacity:.8;margin:14px 0 0">클릭하면 시작합니다. 게임패드도 지원합니다. Ctrl+W는 브라우저 탭을 닫으니 웅크리기는 C를 권장합니다.</p>
+</div></div>
+<script type="module" src="./js/game.js"></script>
+</body>
+</html>
