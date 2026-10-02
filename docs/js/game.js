@@ -148,6 +148,8 @@ document.addEventListener('pointerlockchange', () => {
   $('start').style.display = locked ? 'none' : 'flex';
   if (locked) started = true;
 });
+// 포인터 잠금이 거부되는 환경(임베디드 브라우저 등)에서도 게임은 시작되게 한다
+document.addEventListener('pointerlockerror', () => { started = true; $('start').style.display = 'none'; });
 
 const padPrev = {};
 function readInput() {
@@ -1141,6 +1143,7 @@ spawnWave();
 
 function frame(now) {
   requestAnimationFrame(frame);
+if (new URLSearchParams(location.search).has('debug')) window.__game = { player, enemies, combat, rifle, laser, blast, sword, keys, mouse, start: () => { started = true; $('start').style.display = 'none'; } };
   dtReal = Math.min(0.05, (now - last) / 1000); last = now;
   const inp = readInput();
   if (!started) { updateCamera(inp, dtReal); renderer.render(scene, camera); return; }
